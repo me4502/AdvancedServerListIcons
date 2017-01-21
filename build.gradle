@@ -2,10 +2,14 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
 
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+        classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.13.1"
     }
 }
 
@@ -13,6 +17,8 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'com.github.hierynomus.license'
+
 
     group project.pluginGroup
     version project.pluginVersion
@@ -24,4 +30,35 @@ subprojects {
         mavenCentral()
         jcenter()
     }
+
+    dependencies {
+        compile "com.zaxxer:HikariCP:2.5.1"
+        compile "com.google.guava:guava:17.0"
+    }
+
+    shadowJar {
+        dependencies {
+            include(dependency(':referrals-common'))
+            include(dependency('com.zaxxer:HikariCP:2.5.1'))
+            include(dependency('org.slf4j:slf4j-api'))
+        }
+    }
+
+    license {
+        ext {
+            year = Calendar.getInstance().get(Calendar.YEAR)
+        }
+
+        header = file('../HEADER.txt')
+        include '**/*.java'
+
+        ignoreFailures = false
+        strictCheck = true
+
+        mapping {
+            java = 'SLASHSTAR_STYLE'
+        }
+    }
+
+    build.dependsOn(shadowJar)
 }

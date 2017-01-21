@@ -1,5 +1,6 @@
 plugins {
     id 'org.spongepowered.plugin' version '0.8.1'
+    id "signing"
 }
 
 dependencies {
@@ -11,6 +12,11 @@ processResources {
     from('src/main/resources') {
         expand 'version': project.version
     }
+}
+
+signing {
+    sign configurations.archives
+    sign shadowJar
 }
 
 shadowJar {
