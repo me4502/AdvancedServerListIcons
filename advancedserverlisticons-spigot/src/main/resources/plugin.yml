@@ -1,0 +1,5 @@
+name: AdvancedServerListIcons
+version: @version@
+main: com.me4502.advancedserverlisticons.AdvancedServerListIconsSpigot
+authors: [Me4502]
+description: Advanced Server List Icons for Spigot
