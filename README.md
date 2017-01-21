@@ -9,7 +9,7 @@ The plugin can be downloaded from [the Ore page](https://ore.spongepowered.org/m
 
 Currently this page only contains releases, however it will contain snapshot builds in the future.
 ### Spigot
-TODO
+The plugin can be downloaded from [the Spigot resource page](https://www.spigotmc.org/resources/advanced-server-list-icons.35114/).
 
 Compiling
 ---------
