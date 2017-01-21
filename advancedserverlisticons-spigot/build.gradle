@@ -7,11 +7,16 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
+    maven {
+        name = 'Vault Repo'
+        url = 'http://nexus.hc.to/content/repositories/pub_releases'
+    }
 }
 
 dependencies {
     compile project(':advancedserverlisticons-common')
     compile 'org.spigotmc:spigot-api:1.11-R0.1-SNAPSHOT'
+    compile 'net.milkbowl.vault:VaultAPI:1.6'
 }
 
 processResources {

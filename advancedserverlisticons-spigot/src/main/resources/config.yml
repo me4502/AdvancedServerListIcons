@@ -1,0 +1,15 @@
+jdbc-username: "root"
+jdbc-password: "password"
+jdbc-url: "jdbc:mysql://localhost:3306/minecraft"
+definitions:
+  mainOverlay:
+    priority: 2
+    type: OVERLAY
+    permission: "icon.advanced"
+    images:
+    - "advanced.png"
+  defaultOverlay:
+    priority: 1
+    type: OVERLAY
+    images:
+    - "basic.png"
