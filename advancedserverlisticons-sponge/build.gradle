@@ -19,6 +19,12 @@ signing {
     sign shadowJar
 }
 
+sponge {
+    plugin {
+        id = 'advancedserverlisticons'
+    }
+}
+
 shadowJar {
     dependencies {
         include(dependency(':advancedserverlisticons-common'))
