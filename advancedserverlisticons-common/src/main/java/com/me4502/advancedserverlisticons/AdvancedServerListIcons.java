@@ -33,7 +33,7 @@ public interface AdvancedServerListIcons {
         return instance;
     }
 
-    static void setInstance(AdvancedServerListIcons insance) {
+    static void setInstance(AdvancedServerListIcons instance) {
         try {
             Field field = AdvancedServerListIcons.class.getField("instance");
             field.setAccessible(true);
@@ -42,7 +42,7 @@ public interface AdvancedServerListIcons {
             modifiersField.setAccessible(true);
             modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
-            field.set(null, insance);
+            field.set(null, instance);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }

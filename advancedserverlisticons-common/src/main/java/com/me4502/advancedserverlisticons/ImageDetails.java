@@ -30,10 +30,10 @@ import java.util.UUID;
  * Base system for each image declaration type.
  */
 public abstract class ImageDetails implements Comparable<ImageDetails> {
-    private int priority;
-    private ImageType type;
-    private String permission;
-    private List<String> images;
+    private final int priority;
+    private final ImageType type;
+    private final String permission;
+    private final List<String> images;
 
     public ImageDetails(int priority, ImageType type, String permission, List<String> images) {
         this.priority = priority;
@@ -58,12 +58,6 @@ public abstract class ImageDetails implements Comparable<ImageDetails> {
 
     @Override
     public int compareTo(ImageDetails o) {
-        if (priority < o.priority) {
-            return 1;
-        } else if (priority > o.priority) {
-            return -1;
-        } else {
-            return 0;
-        }
+        return Integer.compare(o.priority, priority);
     }
 }
