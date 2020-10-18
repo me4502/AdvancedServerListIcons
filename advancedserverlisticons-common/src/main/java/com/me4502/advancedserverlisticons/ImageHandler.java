@@ -21,26 +21,33 @@
  */
 package com.me4502.advancedserverlisticons;
 
+import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.io.Resources;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Base64;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
 import javax.imageio.ImageIO;
 
 public class ImageHandler {
 
-    private Set<ImageDetails> imageDetails = new TreeSet<>();
+    private final Set<ImageDetails> imageDetails = new TreeSet<>();
 
     private final LoadingCache<ImageProfile, BufferedImage> iconCache = CacheBuilder.newBuilder().maximumSize(100).expireAfterAccess(5, TimeUnit.MINUTES).build(new CacheLoader<ImageProfile, BufferedImage>() {
         @Override
@@ -90,15 +97,39 @@ public class ImageHandler {
         return iconCache.getUnchecked(new ImageProfile(name, uuid));
     }
 
+    private final Gson gson = new GsonBuilder().create();
+
+    private Optional<URL> getTextureUrl(UUID uuid) throws IOException {
+        URL sessionUrl = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid.toString().replace("-", ""));
+        SessionProfileData data = gson.fromJson(
+            String.join("\n", Resources.readLines(sessionUrl, Charsets.UTF_8)),
+            SessionProfileData.class
+        );
+        for (TextureProperty property : data.properties) {
+            if (property.name.equals("textures")) {
+                String decodedTextureData = new String(Base64.getDecoder().decode(property.value));
+                TextureData textureData = gson.fromJson(decodedTextureData, TextureData.class);
+                return Optional.of(new URL(textureData.textures.get("SKIN").url));
+            }
+        }
+
+        return Optional.empty();
+    }
+
     public BufferedImage getUserHeadImage(UUID uuid, String name) throws IOException {
         File playerHeadDirectory = new File(AdvancedServerListIcons.inst().getDataFolder(), "heads");
         playerHeadDirectory.mkdirs();
         File file = new File(playerHeadDirectory, uuid.toString() + ".png");
         if (!file.exists() || System.currentTimeMillis() - file.lastModified() > 1000*60*60*24) {
-            URL asset = new URL("http://skins.minecraft.net/MinecraftSkins/" + name + ".png");
-            BufferedImage img = toBufferedImage(ImageIO.read(asset).getSubimage(8, 8, 8, 8).getScaledInstance(32, 32, 1));
-            ImageIO.write(img, "png", file);
-            return img;
+            Optional<URL> textureOpt = getTextureUrl(uuid);
+            if (textureOpt.isPresent()) {
+                URL asset = textureOpt.get();
+                BufferedImage img = toBufferedImage(ImageIO.read(asset).getSubimage(8, 8, 8, 8).getScaledInstance(32, 32, 1));
+                ImageIO.write(img, "png", file);
+                return img;
+            } else {
+                throw new FileNotFoundException();
+            }
         } else {
             return ImageIO.read(file);
         }
@@ -137,5 +168,26 @@ public class ImageHandler {
             this.name = name;
             this.uuid = uuid;
         }
+    }
+
+    private class TextureReference {
+        String url;
+    }
+
+    private static class TextureData {
+        long timestamp;
+        String profileId;
+        Map<String, TextureReference> textures;
+    }
+
+    private static class TextureProperty {
+        String name;
+        String value;
+    }
+
+    private static class SessionProfileData {
+        String id;
+        String name;
+        TextureProperty[] properties;
     }
 }

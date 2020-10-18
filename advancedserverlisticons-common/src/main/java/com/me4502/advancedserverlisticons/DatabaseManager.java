@@ -32,9 +32,9 @@ import java.util.UUID;
 
 public class DatabaseManager {
 
-    private String jdbcUrl;
-    private String username;
-    private String password;
+    private final String jdbcUrl;
+    private final String username;
+    private final String password;
 
     private HikariDataSource dataSource;
 

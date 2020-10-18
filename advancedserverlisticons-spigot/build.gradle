@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     compile project(':advancedserverlisticons-common')
-    compile 'org.spigotmc:spigot-api:1.11-R0.1-SNAPSHOT'
+    compile 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
     compile 'net.milkbowl.vault:VaultAPI:1.6'
 }
 
